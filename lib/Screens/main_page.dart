@@ -1,6 +1,9 @@
 import 'package:chargesystem/Screens/fetch_page.dart';
 import 'package:flutter/material.dart';
 import '../provider/db_provider.dart';
+import 'package:chargesystem/table/student.dart';
+
+import 'add_page.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -9,7 +12,14 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   DbProvider dbProvider;
-  TextEditingController _controller;
+  @override
+  void initState() {
+    super.initState();
+    print('init');
+    dbProvider = DbProvider();
+    dbProvider.init();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,15 +31,25 @@ class _MainPageState extends State<MainPage> {
           children: <Widget>[
             IconButton(
               icon: Icon(
-                Icons.category,
+                Icons.add,
               ),
-              onPressed: () {
-                Navigator.pushNamed(context, '/fetch');
+              onPressed: () async {
+                Student student = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddPage(),
+                  ),
+                );
+                if (student == null || student.notComplete())
+                  print('student==null');
+                else
+                  dbProvider.addStudent(student);
+                print(student);
               },
             ),
             IconButton(
               icon: Icon(
-                Icons.add,
+                Icons.face,
               ),
               onPressed: () async {
                 int id = await Navigator.push(
@@ -39,8 +59,13 @@ class _MainPageState extends State<MainPage> {
                   ),
                 );
                 print(id);
-                print(dbProvider.fetchStudent(id));
+                Student student;
+                if (id == null)
+                  print('id==null');
+                else
+                  student = await dbProvider.fetchStudent(id);
                 print(id);
+                print(student.dormitoryId);
               },
             ),
           ],

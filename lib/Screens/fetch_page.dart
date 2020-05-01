@@ -6,7 +6,6 @@ class FetchPage extends StatefulWidget {
 }
 
 class _FetchPageState extends State<FetchPage> {
-  TextEditingController _controller;
   int id;
   @override
   Widget build(BuildContext context) {
@@ -17,14 +16,11 @@ class _FetchPageState extends State<FetchPage> {
       body: Container(
         child: Column(
           children: <Widget>[
-            TextField(
-              controller: _controller,
-              onChanged: (newString) {
-                try {
-                  id = int.parse(newString);
-                } catch (e) {
-                  print(e);
-                }
+            Input(
+              onModified: (newValue) {
+                setState(() {
+                  id = int.parse(newValue);
+                });
               },
             ),
             FlatButton(
@@ -36,6 +32,17 @@ class _FetchPageState extends State<FetchPage> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class Input extends StatelessWidget {
+  final Function onModified;
+  Input({this.onModified});
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      onChanged: onModified,
     );
   }
 }

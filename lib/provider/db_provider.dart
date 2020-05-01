@@ -7,14 +7,15 @@ import 'package:path_provider/path_provider.dart';
 
 class DbProvider {
   Database db;
-  init() async {
+  void init() async {
+    print('init again');
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     final path = join(documentsDirectory.path, 'charge_system.db');
     db = await openDatabase(
       path,
       version: 1,
       onCreate: (Database newDb, int version) {
-        newDb.execute('''
+        newDb.execute("""
         CREATE TABLE Student
           (
             id INTEGER PRIMARY KEY,
@@ -27,20 +28,20 @@ class DbProvider {
             flatId INTEGER,
             dormitoryId INTEGER
           )
-        ''');
+        """);
       },
     );
   }
 
   addStudent(Student student) {
-    db.insert('Student', student.toMapForDb());
+    return db.insert("Student", student.toMapForDb());
   }
 
-  fetchStudent(int id) async {
+  Future<Student> fetchStudent(int id) async {
     final maps = await db.query(
-      'Student',
+      "Student",
       columns: null,
-      where: "id==?",
+      where: "id = ?",
       whereArgs: [id],
     );
     if (maps.length > 0) {
