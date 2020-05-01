@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:chargesystem/table/student.dart';
 import 'package:path/path.dart';
 import 'dart:async';
 import 'package:sqflite/sqflite.dart';
@@ -23,9 +24,28 @@ class DbProvider {
             specialty TEXT,
             classId INTEGER,
             telephone INTEGER,
+            flatId INTEGER,
+            dormitoryId INTEGER
           )
         ''');
       },
     );
+  }
+
+  addStudent(Student student) {
+    db.insert('Student', student.toMapForDb());
+  }
+
+  fetchStudent(int id) async {
+    final maps = await db.query(
+      'Student',
+      columns: null,
+      where: "id==?",
+      whereArgs: [id],
+    );
+    if (maps.length > 0) {
+      return Student.fromDb(maps.first);
+    }
+    return null;
   }
 }
